@@ -205,7 +205,7 @@ async function obterDisciplinasPorDepartamento(siglaDepartamento) {
         const result = await client.query(query, [siglaDepartamento]);
         // Total de disciplinas encontradas
         
-        console.log("------- Disicplinas do departamento -------")
+        console.log("------- Disciplinas do departamento -------")
         console.log(result.rows);
         console.log("Total de disciplinas encontradas: ", result.rows.length)
         return result.rows;
@@ -254,11 +254,11 @@ async function obterDisciplinasPorProfessor(nuspProfessor) {
       const query = `
           SELECT d.*
           FROM disciplina d
-          JOIN ministra m ON d.sigla_departamento = m.sigla_disciplina
+          JOIN ministra m ON d.sigla_disciplina = m.sigla_disciplina
           WHERE m.nusp_professor = $1`;
       
       const result = await client.query(query, [nuspProfessor]);
-      console.log("------- Disicplinas do Professor -------")
+      console.log("------- Disciplinas do Professor -------")
       console.log(result.rows);
       return result.rows;
   } catch (error) {
