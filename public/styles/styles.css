@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #1d2956;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 36px;
+}
+
+h1:hover{
+    animation: bounce 1s infinite alternate;
+}
+
+@keyframes bounce {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-10px); }
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #333;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: #eee;
+}
+
+nav ul li a:hover {
+    background-color: #ccc;
+}
+
+section {
+    padding: 20px;
+    margin: 20px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+}
+
+.title_secao{
+    color: #333;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+    font-weight: 700;
+    font-size: x-large;
+}
+
+h2 {
+    color: #fff;
+    font-weight: 100;
+    font-size: large;
+}
+
+.hidden {
+    display: none;
+}
+
+button{
+    border: none;
+}
+
+.search {
+    margin-bottom: 20px;
+}
+
+#searchResults ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#searchResults li {
+    margin-bottom: 5px;
+}
