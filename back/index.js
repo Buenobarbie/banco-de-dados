@@ -1,10 +1,7 @@
-import { consultarDepartamentos } from './consultas';
+import { consultarAlunosPorNomeNuspAnoIngresso } from './back/consultas';
 
 async function main() {
-    // Consulta todos os departamentos
-    const departamentos = await consultarDepartamentos();
-    console.log('Departamentos encontrados:');
-    console.table(departamentos);
+
     
     // Defina os valores para nome, nusp e anoIngresso conforme desejado
     const nome = 'João';

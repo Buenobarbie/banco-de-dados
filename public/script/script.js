@@ -1,3 +1,17 @@
+// Changes
+import { Client } from 'pg';
+
+// Configurações de conexão com o banco de dados
+const client = new Client({
+  user: 'u_13684471',
+  host: 'estagiosV2.pcs.usp.br',
+  database: 'db_13684471',
+  password: '13684471',
+  port: '65432', // Por padrão, é 5432
+});
+
+//------------------------------------------------------
+
 const toggleButtons = document.querySelectorAll('.toggleButton');
 
 toggleButtons.forEach(button => {
@@ -8,12 +22,12 @@ toggleButtons.forEach(button => {
     });
 });
 
-const students = [
-    { nome: "João", matricula: "20210001", anoIngresso: 2021 },
-    { nome: "Maria", matricula: "20210002", anoIngresso: 2020 },
-    { nome: "Pedro", matricula: "20210003", anoIngresso: 2021 },
-    // Adicione mais alunos conforme necessário
-];
+// const students = [
+//     { nome: "João", matricula: "20210001", anoIngresso: 2021 },
+//     { nome: "Maria", matricula: "20210002", anoIngresso: 2020 },
+//     { nome: "Pedro", matricula: "20210003", anoIngresso: 2021 },
+//     // Adicione mais alunos conforme necessário
+// ];
 
 const searchByNameInput = document.getElementById('searchByName');
 const searchByMatriculaInput = document.getElementById('searchByMatricula');
