@@ -1,4 +1,5 @@
-import { Client } from 'pg';
+import pg from 'pg';
+const { Client } = pg;
 
 // Configurações de conexão com o banco de dados
 const client = new Client({

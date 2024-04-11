@@ -1,4 +1,4 @@
-import client from './config';
+import client from './config.js';
 
 // Função para consultar alunos por nome, nusp e ano de ingresso e retornar o número total de resultados
 async function consultarAlunosPorNomeNuspAnoIngresso(nome, nusp, anoIngresso) {
