@@ -1,8 +1,10 @@
+const babs = 1;
 import client from './config.js';
 
 // Função para consultar alunos por nome, nusp e ano de ingresso e retornar o número total de resultados
 async function consultarAlunosPorNomeNuspAnoIngresso(nome, nusp, anoIngresso) {
-  try {
+   console.log("Entrei aqui");
+    try {
       await client.connect(); // Conecta ao banco de dados
       
       // Consulta para obter os alunos

@@ -1,4 +1,4 @@
-import consultarAlunosPorNomeNuspAnoIngresso from '../../back/consultas.js';
+import consultarAlunosPorNomeNuspAnoIngresso from '../back/consultas.js';
 
 
 
@@ -20,7 +20,7 @@ toggleButtons.forEach(button => {
 //     { nome: "Pedro", matricula: "20210003", anoIngresso: 2021 },
 //     // Adicione mais alunos conforme necessário
 // ];
-
+console.log('q')
 const searchByNameInput = document.getElementById('searchByName');
 const searchByMatriculaInput = document.getElementById('searchByMatricula');
 const searchByAnoIngressoInput = document.getElementById('searchByAnoIngresso');
@@ -49,6 +49,7 @@ async function searchStudents() {
     const searchByMatricula = searchByMatriculaInput.value.toLowerCase();
     const searchByAnoIngresso = parseInt(searchByAnoIngressoInput.value);
 
+    console.log("Vai chamar a função de consulta");
     const {results, count} = await consultarAlunosPorNomeNuspAnoIngresso(searchByName, searchByMatricula, searchByAnoIngresso);
     // const results = students.filter(student => {
     //     const nomeMatch = student.nome.toLowerCase().includes(searchByName);
@@ -57,6 +58,7 @@ async function searchStudents() {
 
     //     return nomeMatch && matriculaMatch && anoIngressoMatch;
     // });
+    console.log("Chamou a função de consulta");
 
     renderResults(results);
 }
