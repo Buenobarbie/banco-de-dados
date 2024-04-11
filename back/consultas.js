@@ -3,7 +3,7 @@ import client from './config.js';
 
 // Função para consultar alunos por nome, nusp e ano de ingresso e retornar o número total de resultados
 async function consultarAlunosPorNomeNuspAnoIngresso(nome, nusp, anoIngresso) {
-   console.log("Entrei aqui");
+
     try {
       await client.connect(); // Conecta ao banco de dados
       
@@ -25,7 +25,9 @@ async function consultarAlunosPorNomeNuspAnoIngresso(nome, nusp, anoIngresso) {
           AND CAST(ano_ingresso AS TEXT) LIKE $3`;
       const countResult = await client.query(countQuery, [`%${nome}%`, `${nusp}%`, `${anoIngresso}%`]);
       const totalAlunos = parseInt(countResult.rows[0].total_alunos);
-
+      console.log("------- Alunos encontrados -------")
+      console.log(result.rows);
+      console.log("Total de alunos encontrados: ", totalAlunos)
       return { alunos: result.rows, totalAlunos };
   } catch (error) {
       console.error('Erro ao executar a consulta:', error);
@@ -44,18 +46,22 @@ async function consultarProfessorPorNomeNusp(nome, nusp) {
       const query = `
           SELECT *
           FROM professor
-          WHERE nome LIKE '%$1%'
-          AND CAST(nusp AS TEXT) LIKE '$2%'`;
+          WHERE nome LIKE $1
+          AND CAST(nusp AS TEXT) LIKE $2`;
       const result = await client.query(query, [`%${nome}%`, `%${nusp}%`]);
 
       // Consulta para contar o número total de professores
       const countQuery = `
           SELECT COUNT(*) AS total_professores
           FROM professor
-          WHERE nome LIKE '%$1%'
-          AND CAST(nusp AS TEXT) LIKE '$2%'`;
+          WHERE nome LIKE $1
+          AND CAST(nusp AS TEXT) LIKE $2`;
       const countResult = await client.query(countQuery, [`%${nome}%`, `%${nusp}%`]);
       const totalProfessores = parseInt(countResult.rows[0].total_professores);
+
+      console.log("------- Professores encontrados -------")
+      console.log(result.rows);
+      console.log("Total de professores encontrados: ", totalProfessores)
 
       return { professores: result.rows, totalProfessores };
   } catch (error) {
@@ -76,15 +82,15 @@ async function consultarDisciplinaporSiglaNome(sigla, nome) {
       const queryDisciplinas = `
           SELECT * 
           FROM disciplina 
-          WHERE nome LIKE '%$1%' 
-          AND sigla LIKE '%$2%'`;
+          WHERE nome LIKE $1
+          AND sigla LIKE $2`;
 
       // Consulta para contar o número de disciplinas
       const queryCount = `
           SELECT COUNT(*) 
           FROM disciplina 
-          WHERE nome LIKE '%$1%' 
-          AND sigla LIKE '%$2%'`;
+          WHERE nome LIKE $1
+          AND sigla LIKE $2`;
 
       // Executa a consulta para obter disciplinas
       const resultDisciplinas = await client.query(queryDisciplinas, [`%${sigla}%`, `%${nome}%`]);
@@ -93,7 +99,9 @@ async function consultarDisciplinaporSiglaNome(sigla, nome) {
       // Executa a consulta para contar o número de disciplinas
       const resultCount = await client.query(queryCount, [`%${sigla}%`, `%${nome}%`]);
       const count = parseInt(resultCount.rows[0].count); // Converte a contagem para um número inteiro
-
+      console.log("------- Disciplinas encontradas -------")
+      console.log(result.rows);
+      console.log("Total de disciplinas encontrados: ", count)
       return { disciplinas, count };
   } catch (error) {
       console.error('Erro ao executar a consulta:', error);
@@ -112,9 +120,11 @@ async function consultarDepartamentoporSiglaNome(sigla, nome) {
       const query = `
           SELECT * 
           FROM departamento 
-          WHERE nome LIKE '%$1%' 
-          AND sigla LIKE '%$2%'`;
+          WHERE nome LIKE $1 
+          AND sigla LIKE $2`;
       const result = await client.query(query, [`%${sigla}%`, `%${nome}%`]);
+      console.log("------- Departamentos encontrados -------")
+      console.log(result.rows);
       
       return result.rows;
       
@@ -139,7 +149,8 @@ async function exibirAlunosPorDisciplina(siglaDisciplina) {
           WHERE m.sigla_disciplina = $1`;
       
       const result = await client.query(query, [siglaDisciplina]);
-
+      console.log("------- Alunos da disciplina -------")
+      console.log(result.rows);
       return result.rows;
   } catch (error) {
       console.error('Erro ao executar a consulta:', error);
@@ -163,7 +174,8 @@ async function exibirDisciplinasPorAluno(nuspAluno) {
           WHERE m.nusp = $1`;
       
       const result = await client.query(query, [nuspAluno]);
-
+      console.log("------- Disciplinas do Aluno -------")
+      console.log(result.rows);
       return result.rows;
   } catch (error) {
       console.error('Erro ao executar a consulta:', error);
@@ -186,7 +198,8 @@ async function obterDisciplinasPorDepartamento(siglaDepartamento) {
             WHERE sigla_departamento = $1`;
         
         const result = await client.query(query, [siglaDepartamento]);
-
+        console.log("------- Disicplinas do departamento -------")
+        console.log(result.rows);
         return result.rows;
     } catch (error) {
         console.error('Erro ao executar a consulta:', error);
@@ -208,7 +221,8 @@ async function obterCoordenadorDepartamento(siglaDepartamento) {
           WHERE d.sigla = $1`;
       
       const result = await client.query(query, [siglaDepartamento]);
-
+      console.log("------- Coordenador do departamento -------")
+      console.log(result.rows);
       if (result.rows.length > 0) {
           return result.rows[0].nome; // Retorna o nome do coordenador
       } else {
@@ -235,7 +249,8 @@ async function obterDisciplinasPorProfessor(nuspProfessor) {
           WHERE m.nusp_professor = $1`;
       
       const result = await client.query(query, [nuspProfessor]);
-
+      console.log("------- Disicplinas do Professor -------")
+      console.log(result.rows);
       return result.rows;
   } catch (error) {
       console.error('Erro ao executar a consulta:', error);
@@ -258,7 +273,8 @@ async function obterProfessoresPorDisciplina(siglaDisciplina) {
           WHERE m.sigla_disciplina = $1`;
       
       const result = await client.query(query, [siglaDisciplina]);
-
+      console.log("------- Professores da disciplina -------")
+      console.log(result.rows);
       return result.rows;
   } catch (error) {
       console.error('Erro ao executar a consulta:', error);
@@ -290,7 +306,8 @@ async function listarProfessoresPorDepartamento(siglaDepartamento) {
 
       const professores = result.rows;
       const totalProfessores = parseInt(countResult.rows[0].total_professores);
-
+      console.log("------- Professores do Departamento -------")
+      console.log(result.rows);
       return { professores, totalProfessores };
   } catch (error) {
       console.error('Erro ao executar a consulta:', error);
@@ -300,18 +317,29 @@ async function listarProfessoresPorDepartamento(siglaDepartamento) {
   }
 }
 
-// export default { 
-//   consultarDepartamentoporSiglaNome, 
-//   consultarProfessorPorNomeNusp,
-//   consultarAlunosPorNomeNuspAnoIngresso,
-//   consultarDisciplinaporSiglaNome,
-//   exibirAlunosPorDisciplina,
-//   exibirDisciplinasPorAluno,
-//   obterDisciplinasPorDepartamento,
-//   obterCoordenadorDepartamento,
-//   obterDisciplinasPorProfessor,
-//   obterProfessoresPorDisciplina,
-//   listarProfessoresPorDepartamento
-// };
+export default { 
+  consultarDepartamentoporSiglaNome, 
+  consultarProfessorPorNomeNusp,
+  consultarAlunosPorNomeNuspAnoIngresso,
+  consultarDisciplinaporSiglaNome,
+  exibirAlunosPorDisciplina,
+  exibirDisciplinasPorAluno,
+  obterDisciplinasPorDepartamento,
+  obterCoordenadorDepartamento,
+  obterDisciplinasPorProfessor,
+  obterProfessoresPorDisciplina,
+  listarProfessoresPorDepartamento
+};
 
-export default consultarAlunosPorNomeNuspAnoIngresso;
+// export  default {consultarAlunosPorNomeNuspAnoIngresso};
+// export  default {consultarProfessorPorNomeNusp};
+// export  {consultarDisciplinaporSiglaNome};
+// export  {consultarDepartamentoporSiglaNome};
+// export  {exibirAlunosPorDisciplina};
+// export  {exibirDisciplinasPorAluno};
+// export  {obterDisciplinasPorDepartamento};
+// export  {obterCoordenadorDepartamento};
+// export  {obterDisciplinasPorProfessor};
+// export  {obterProfessoresPorDisciplina};
+// export  {listarProfessoresPorDepartamento};
+
