@@ -87,24 +87,24 @@ async function consultarDisciplinaporSiglaNome(sigla, nome) {
           SELECT * 
           FROM disciplina 
           WHERE nome LIKE $1
-          AND sigla LIKE $2`;
+          AND sigla_disciplina LIKE $2`;
 
       // Consulta para contar o número de disciplinas
       const queryCount = `
           SELECT COUNT(*) 
           FROM disciplina 
           WHERE nome LIKE $1
-          AND sigla LIKE $2`;
+          AND sigla_disciplina LIKE $2`;
 
       // Executa a consulta para obter disciplinas
-      const resultDisciplinas = await client.query(queryDisciplinas, [`%${sigla}%`, `%${nome}%`]);
+      const resultDisciplinas = await client.query(queryDisciplinas, [`%${nome}%`, `%${sigla}%`]);
       const disciplinas = resultDisciplinas.rows;
 
       // Executa a consulta para contar o número de disciplinas
-      const resultCount = await client.query(queryCount, [`%${sigla}%`, `%${nome}%`]);
+      const resultCount = await client.query(queryCount, [`%${nome}%`, `%${sigla}%`]);
       const count = parseInt(resultCount.rows[0].count); // Converte a contagem para um número inteiro
       console.log("------- Disciplinas encontradas -------")
-      console.log(result.rows);
+      console.log(resultDisciplinas.rows);
       console.log("Total de disciplinas encontrados: ", count)
       return { disciplinas, count };
   } catch (error) {
@@ -125,8 +125,8 @@ async function consultarDepartamentoporSiglaNome(sigla, nome) {
           SELECT * 
           FROM departamento 
           WHERE nome LIKE $1 
-          AND sigla LIKE $2`;
-      const result = await client.query(query, [`%${sigla}%`, `%${nome}%`]);
+          AND sigla_departamento LIKE $2`;
+      const result = await client.query(query, [`%${nome}%`, `%${sigla}%`]);
       console.log("------- Departamentos encontrados -------")
       console.log(result.rows);
       
@@ -149,12 +149,13 @@ async function exibirAlunosPorDisciplina(siglaDisciplina) {
       const query = `
           SELECT a.nome, a.nusp
           FROM aluno a
-          JOIN matricula m ON a.nusp = m.nusp
+          JOIN matricula m ON a.nusp = m.nusp_aluno
           WHERE m.sigla_disciplina = $1`;
       
       const result = await client.query(query, [siglaDisciplina]);
       console.log("------- Alunos da disciplina -------")
       console.log(result.rows);
+      console.log("Total de alunos encontrados: ", result.rows.length)
       return result.rows;
   } catch (error) {
       console.error('Erro ao executar a consulta:', error);
@@ -172,10 +173,10 @@ async function exibirDisciplinasPorAluno(nuspAluno) {
       
       // Consulta para obter as disciplinas que o aluno cursa
       const query = `
-          SELECT d.nome, d.sigla
+          SELECT d.nome, d.sigla_disciplina
           FROM disciplina d
-          JOIN matricula m ON d.sigla = m.sigla_disciplina
-          WHERE m.nusp = $1`;
+          JOIN matricula m ON d.sigla_disciplina = m.sigla_disciplina
+          WHERE m.nusp_aluno = $1`;
       
       const result = await client.query(query, [nuspAluno]);
       console.log("------- Disciplinas do Aluno -------")
@@ -202,8 +203,11 @@ async function obterDisciplinasPorDepartamento(siglaDepartamento) {
             WHERE sigla_departamento = $1`;
         
         const result = await client.query(query, [siglaDepartamento]);
+        // Total de disciplinas encontradas
+        
         console.log("------- Disicplinas do departamento -------")
         console.log(result.rows);
+        console.log("Total de disciplinas encontradas: ", result.rows.length)
         return result.rows;
     } catch (error) {
         console.error('Erro ao executar a consulta:', error);
@@ -219,10 +223,11 @@ async function obterCoordenadorDepartamento(siglaDepartamento) {
       
       // Consulta para obter o nome do coordenador do departamento
       const query = `
-          SELECT f.nome
-          FROM funcionario f
-          JOIN departamento d ON f.nusp = d.coordenador
-          WHERE d.sigla = $1`;
+      SELECT f.nome
+      FROM professor f
+      JOIN departamento d ON CAST(f.nusp as TEXT) = d.nusp_coordenador
+      WHERE d.sigla_departamento = $1`;
+    
       
       const result = await client.query(query, [siglaDepartamento]);
       console.log("------- Coordenador do departamento -------")
@@ -249,7 +254,7 @@ async function obterDisciplinasPorProfessor(nuspProfessor) {
       const query = `
           SELECT d.*
           FROM disciplina d
-          JOIN ministra m ON d.sigla = m.sigla_disciplina
+          JOIN ministra m ON d.sigla_departamento = m.sigla_disciplina
           WHERE m.nusp_professor = $1`;
       
       const result = await client.query(query, [nuspProfessor]);
@@ -271,10 +276,11 @@ async function obterProfessoresPorDisciplina(siglaDisciplina) {
       
       // Consulta para obter os professores que ministram a disciplina
       const query = `
-          SELECT f.*
-          FROM funcionario f
-          JOIN ministra m ON f.nusp = m.nusp_professor
-          WHERE m.sigla_disciplina = $1`;
+      SELECT p.nome, p.nusp
+      FROM ministra m
+      JOIN professor p ON m.nusp_professor = p.nusp
+      WHERE m.sigla_disciplina = $1`;
+      
       
       const result = await client.query(query, [siglaDisciplina]);
       console.log("------- Professores da disciplina -------")
@@ -296,13 +302,13 @@ async function listarProfessoresPorDepartamento(siglaDepartamento) {
       // Consulta para obter os professores do departamento
       const query = `
           SELECT nome, nusp
-          FROM funcionario
+          FROM professor
           WHERE sigla_departamento = $1`;
 
       // Consulta para contar o número total de professores no departamento
       const countQuery = `
           SELECT COUNT(*) AS total_professores
-          FROM funcionario
+          FROM professor
           WHERE sigla_departamento = $1`;
 
       const result = await client.query(query, [siglaDepartamento]);
@@ -312,6 +318,7 @@ async function listarProfessoresPorDepartamento(siglaDepartamento) {
       const totalProfessores = parseInt(countResult.rows[0].total_professores);
       console.log("------- Professores do Departamento -------")
       console.log(result.rows);
+      console.log("Total de professores encontrados: ", totalProfessores)
       return { professores, totalProfessores };
   } catch (error) {
       console.error('Erro ao executar a consulta:', error);
@@ -341,7 +348,7 @@ function exibirMenu() {
   console.log('9. Obter disciplinas de um professor');
   console.log('10. Obter professores de uma disciplina');
   console.log('11. Listar professores de um departamento');
-  
+
 }
 
 // Função para realizar a pesquisa de acordo com a opção selecionada
