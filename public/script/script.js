@@ -1,14 +1,6 @@
-// Changes
-import { Client } from 'pg';
+import consultarAlunosPorNomeNuspAnoIngresso from '../../back/consultas.js';
 
-// Configurações de conexão com o banco de dados
-const client = new Client({
-  user: 'u_13684471',
-  host: 'estagiosV2.pcs.usp.br',
-  database: 'db_13684471',
-  password: '13684471',
-  port: '65432', // Por padrão, é 5432
-});
+
 
 //------------------------------------------------------
 
@@ -52,18 +44,19 @@ function renderResults(results) {
     searchResults.appendChild(ul);
 }
 
-function searchStudents() {
+async function searchStudents() {
     const searchByName = searchByNameInput.value.toLowerCase();
     const searchByMatricula = searchByMatriculaInput.value.toLowerCase();
     const searchByAnoIngresso = parseInt(searchByAnoIngressoInput.value);
 
-    const results = students.filter(student => {
-        const nomeMatch = student.nome.toLowerCase().includes(searchByName);
-        const matriculaMatch = student.matricula.toLowerCase().includes(searchByMatricula);
-        const anoIngressoMatch = isNaN(searchByAnoIngresso) || student.anoIngresso === searchByAnoIngresso;
+    const {results, count} = await consultarAlunosPorNomeNuspAnoIngresso(searchByName, searchByMatricula, searchByAnoIngresso);
+    // const results = students.filter(student => {
+    //     const nomeMatch = student.nome.toLowerCase().includes(searchByName);
+    //     const matriculaMatch = student.matricula.toLowerCase().includes(searchByMatricula);
+    //     const anoIngressoMatch = isNaN(searchByAnoIngresso) || student.anoIngresso === searchByAnoIngresso;
 
-        return nomeMatch && matriculaMatch && anoIngressoMatch;
-    });
+    //     return nomeMatch && matriculaMatch && anoIngressoMatch;
+    // });
 
     renderResults(results);
 }

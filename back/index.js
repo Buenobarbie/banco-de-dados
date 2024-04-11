@@ -1,19 +1,21 @@
-import { consultarAlunosPorNomeNuspAnoIngresso } from './back/consultas';
+import consultarAlunosPorNomeNuspAnoIngresso from './consultas.js';
+
 
 async function main() {
 
     
     // Defina os valores para nome, nusp e anoIngresso conforme desejado
-    const nome = 'João';
-    const nusp = '123456';
-    const anoIngresso = 2020;
+    const nome = '';
+    const nusp = '';
+    const anoIngresso = '';
 
     // Chame a função de consulta e aguarde sua conclusão
-    const alunos = await consultarAlunosPorNomeNuspAnoIngresso(nome, nusp, anoIngresso);
+    const {alunos, total} = await consultarAlunosPorNomeNuspAnoIngresso(nome, nusp, anoIngresso);
     
     // Exiba os resultados no console
     console.log('Alunos encontrados:');
     console.table(alunos);
+    console.log(total)
 }
 
 main();

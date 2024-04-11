@@ -9,19 +9,19 @@ async function consultarAlunosPorNomeNuspAnoIngresso(nome, nusp, anoIngresso) {
       const query = `
         SELECT *
         FROM aluno
-        WHERE nome LIKE '%$1%'
-        AND CAST(nusp AS TEXT) LIKE '$2%'
-        AND CAST(ano_ingresso AS TEXT) LIKE '%$3%'`;
-      const result = await client.query(query, [`%${nome}%`, `%${nusp}%`, anoIngresso]);
+        WHERE nome LIKE $1
+        AND CAST(nusp AS TEXT) LIKE $2
+        AND CAST(ano_ingresso AS TEXT) LIKE $3`;
+      const result = await client.query(query, [`%${nome}%`, `${nusp}%`, `${anoIngresso}%`]);
 
       // Consulta para contar o número total de alunos
       const countQuery = `
           SELECT COUNT(*) AS total_alunos
           FROM aluno
-          WHERE nome LIKE '%$1%'
-          AND CAST(nusp AS TEXT) LIKE '$2%'
-          AND CAST(ano_ingresso AS TEXT) LIKE '%$3%'`;
-      const countResult = await client.query(countQuery, [`%${nome}%`, `%${nusp}%`, anoIngresso]);
+          WHERE nome LIKE $1
+          AND CAST(nusp AS TEXT) LIKE $2
+          AND CAST(ano_ingresso AS TEXT) LIKE $3`;
+      const countResult = await client.query(countQuery, [`%${nome}%`, `${nusp}%`, `${anoIngresso}%`]);
       const totalAlunos = parseInt(countResult.rows[0].total_alunos);
 
       return { alunos: result.rows, totalAlunos };
@@ -298,16 +298,18 @@ async function listarProfessoresPorDepartamento(siglaDepartamento) {
   }
 }
 
-export default { 
-  consultarDepartamentoporSiglaNome, 
-  consultarProfessorPorNomeNusp,
-  consultarAlunosPorNomeNuspAnoIngresso,
-  consultarDisciplinaporSiglaNome,
-  exibirAlunosPorDisciplina,
-  exibirDisciplinasPorAluno,
-  obterDisciplinasPorDepartamento,
-  obterCoordenadorDepartamento,
-  obterDisciplinasPorProfessor,
-  obterProfessoresPorDisciplina,
-  listarProfessoresPorDepartamento
-};
+// export default { 
+//   consultarDepartamentoporSiglaNome, 
+//   consultarProfessorPorNomeNusp,
+//   consultarAlunosPorNomeNuspAnoIngresso,
+//   consultarDisciplinaporSiglaNome,
+//   exibirAlunosPorDisciplina,
+//   exibirDisciplinasPorAluno,
+//   obterDisciplinasPorDepartamento,
+//   obterCoordenadorDepartamento,
+//   obterDisciplinasPorProfessor,
+//   obterProfessoresPorDisciplina,
+//   listarProfessoresPorDepartamento
+// };
+
+export default consultarAlunosPorNomeNuspAnoIngresso;
